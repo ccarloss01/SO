@@ -155,7 +155,7 @@ public class TelaExecucao extends JFrame {
 	
 	public void sentidoTrem(String sentido,double tv) {
 		tv /= 2;
-		tv /= 480;
+		tv /= 405;
 		int atraso = (int) Math.round(tv);
 		
 		if(sentido.equals("Baixo")) {

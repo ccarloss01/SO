@@ -36,8 +36,8 @@ public class Trem extends Thread {
 			this.telaExecucao.caixasArmazenadas(Armazem.quantidadeAtual);
 			this.telaExecucao.sentidoTrem("Baixo",tempoViagem);
 
-			Semaforo.mutex.release();
 			Semaforo.armazemVazio.release(Armazem.capacidadeTrem);
+			Semaforo.mutex.release();
 			
 			long time = System.currentTimeMillis();
 			

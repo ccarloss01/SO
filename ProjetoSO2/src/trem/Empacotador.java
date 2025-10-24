@@ -51,13 +51,13 @@ public class Empacotador extends Thread {
 				}
 
 				Armazem.quantidadeAtual++;
-				Semaforo.armazemCheio.release();
 				
 				this.telaExecucao.caixasArmazenadas(Armazem.quantidadeAtual);
 				this.telaExecucao.mudarImagemEmpacotador(this.id, TelaExecucao.empacotadorRetornando);
 				this.telaExecucao.sentidoEmpacotador(this.id,"Esquerda", this.tempoEmpacotamento);
 				
 				Semaforo.mutex.release();
+				Semaforo.armazemCheio.release();
 			}
 		}
 	}

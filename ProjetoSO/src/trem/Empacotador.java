@@ -1,47 +1,43 @@
 package trem;
 
-import painel.Tela;
-import painel.Tela2;
+import painel.TelaExecucao;
 
 public class Empacotador extends Thread {
-	private int id;
+	
+	public int id;
 	public int tempoEmpacotamento;
-	public Tela mainInterface;
-	public Tela quantidadeCaixas;
+	
+	public TelaExecucao telaExecucao;
 
-	public Empacotador(int id, int tempo_empacotamento, Tela mainInterface, Tela progresso) {
+	public Empacotador(int id, int tempoEmpacotamento, TelaExecucao telaExecucao) {
 		this.id = id;
-		this.tempoEmpacotamento = tempo_empacotamento * 1000;
-		this.mainInterface = mainInterface;
-		this.quantidadeCaixas = progresso;
+		this.tempoEmpacotamento = tempoEmpacotamento * 1000;
+		this.telaExecucao = telaExecucao;
 	}
 
 	public void run() {
-		while (true) {
-			
-			
+		while (TelaExecucao.empacotar) {
 			long time = System.currentTimeMillis();
 			
 			while (System.currentTimeMillis() - time < (long) this.tempoEmpacotamento/2) {
 			}
-			this.mainInterface.changeImg(this.id, Tela2.empacotando);
+			this.telaExecucao.mudarImagemEmpacotador(this.id, TelaExecucao.empacotadorEmpacotando);
 			
 			while (System.currentTimeMillis() - time < (long) this.tempoEmpacotamento*3/4) {	
 			}
-			this.mainInterface.changeImg(this.id, Tela2.terminou);
-			this.mainInterface.SentidoE(this.id,"Direita", this.tempoEmpacotamento);
+			this.telaExecucao.mudarImagemEmpacotador(this.id, TelaExecucao.empacotadorFinalizou);
+			this.telaExecucao.sentidoEmpacotador(this.id,"Direita", this.tempoEmpacotamento);
 			
 			while (System.currentTimeMillis() - time < (long) this.tempoEmpacotamento) {	
 			}
-			this.mainInterface.changeImg(this.id, Tela2.voltando);
+			this.telaExecucao.mudarImagemEmpacotador(this.id, TelaExecucao.empacotadorRetornando);
 			
 			try {
-				if (Semaforo.armazemLim.availablePermits() == 0) {
-					
-					this.mainInterface.changeImg(this.id, Tela2.dormindo);
+				if (Semaforo.armazemVazio.availablePermits() == 0) {
+					this.telaExecucao.mudarImagemEmpacotador(this.id, TelaExecucao.empacotadorDormindo);
 				}
 
-				Semaforo.armazemLim.acquire();
+				Semaforo.armazemVazio.acquire();
 			} catch (InterruptedException i) {
 				i.printStackTrace();
 			}
@@ -53,15 +49,13 @@ public class Empacotador extends Thread {
 			}
 
 			Armazem.quantidadeAtual++;
+			Semaforo.armazemCheio.release();
 			
-			quantidadeCaixas.caixasArmazenadas(Armazem.quantidadeAtual);
+			this.telaExecucao.caixasArmazenadas(Armazem.quantidadeAtual);
+			this.telaExecucao.mudarImagemEmpacotador(this.id, TelaExecucao.empacotadorRetornando);
+			this.telaExecucao.sentidoEmpacotador(this.id,"Esquerda", this.tempoEmpacotamento);
 
-			this.mainInterface.changeImg(this.id, Tela2.voltando);
-			this.mainInterface.SentidoE(this.id,"Esquerda", this.tempoEmpacotamento);
 			Semaforo.mutex.release();
-			if (Armazem.quantidadeAtual >= Armazem.maximoTrem) {
-				Semaforo.armazemSuficiente.release();
-			}
 		}
 	}
 }

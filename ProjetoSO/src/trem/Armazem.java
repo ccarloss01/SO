@@ -1,11 +1,11 @@
 package trem;
 
 public class Armazem {
+
+	public static int capacidadeArmazem = painel.TelaInicial.capacidadeArmazem;
 	
-	public static int maximoTrem = painel.Tela.cargaTrem;
+	public static int capacidadeTrem = painel.TelaInicial.capacidadeTrem;
 	
 	public static int quantidadeAtual;
-	
-	public static int maximoArmazem = painel.Tela.maximoArmazem;
 	
 }
